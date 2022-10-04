@@ -1,4 +1,4 @@
-# NBA_scraping
+# NBA scraping
 
 Webscraping project on the NBA.
 
