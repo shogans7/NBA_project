@@ -53,8 +53,8 @@ try:
     current_time = dt.datetime.now(tz).strftime("%H:%M")
     print(current_date, current_time, "Pacific Standard Time")
 
-    name = "PaddyPower"
-    scraper.paddy_power_scraper(driver, current_date, current_time, name, credentials)
+    name = "888"
+    scraper.bet888_scraper(driver, current_date, current_time, name, credentials)
 
     driver.close()
     driver.quit()

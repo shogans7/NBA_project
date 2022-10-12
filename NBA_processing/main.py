@@ -1,5 +1,5 @@
 import pandas as pd
-import datetime
+import datetime as dt
 import numpy as np
 import random
 from datetime import timedelta
@@ -17,14 +17,17 @@ utils.chooseCRANmirror(ind=1)
 utils.install_packages('ffstream')
 ffstream = importr('ffstream')
 
-
 # SETUP
-names = ["PaddyPower", "Betfair"]
-current_date = datetime.datetime.now()
-yesterday = (current_date - timedelta(days=1)).strftime("%d-%m-%Y")
-today = current_date.strftime("%d-%m-%Y")
+names = ["PaddyPower", "888"]
+local = True
+today = dt.datetime.now().strftime("%d-%m-%Y")
+yesterday = (dt.datetime.now() - timedelta(days=1)).strftime("%d-%m-%Y")
+date = today
 
-date = yesterday
+if local:
+    file_path = f"/Users/shanehogan/Desktop/Betting Project Data/NBA-BT-Probabilities--{today}.csv"
+else:
+    file_path = ""
 
 scopes = [
     'https://www.googleapis.com/auth/spreadsheets',
@@ -34,6 +37,8 @@ scopes = [
 json_file_pathname = "/Users/shanehogan/Downloads/crafty-haiku-361014-eb14babc812e.json"
 credentials = ServiceAccountCredentials.from_json_keyfile_name(json_file_pathname, scopes)
 
+
+BT_modelled_probs = pd.read_csv(file_path)
 odds = {}
 live_odds = {}
 
@@ -132,8 +137,13 @@ for index, row in best_odds_df.iterrows():
         prev_team = index
         prev_bookie = row.values[1]
         home = False
-    #         if decimal_odds_to_implied_prob(float(row.values[0])) < model_probs.loc[index].values[0]:
-    #             print("Discrepancy in odds with modelled probability", index, decimal_odds_to_implied_prob(float(row.values[0])), "<", model_probs.loc[index].values[0])
+        if helper_functions.decimal_odds_to_implied_prob(float(row.values[0])) < BT_modelled_probs.loc[index].values[0]:
+            print("Discrepancy in odds with modelled probability", index, helper_functions.decimal_odds_to_implied_prob(float(row.values[0])), "<", BT_modelled_probs.loc[index].values[0])
+            line1 = index + " @ " + prev_team
+            line2 = "Discrepancy in odds with modelled probability " + index + helper_functions.decimal_odds_to_implied_prob(
+                float(row.values[0])) + " < " + BT_modelled_probs.loc[index].values[0]
+            line3 = "(HOME) " + index + " at " + str(row.values[0]) + " on " + row.values[1]
+            helper_functions.send_email(subject="Modelling Discrepancy", content=[line1, line2, line3])
 
     elif not home:
         away_odds = row.values[0]
@@ -146,12 +156,19 @@ for index, row in best_odds_df.iterrows():
             line1 = index + " @ " + prev_team
             line2 = "(HOME) " + prev_team + " at " + str(prev_odds) + " on " + prev_bookie
             line3 = "(AWAY) " + index + " at " + str(row.values[0]) + " on " + row.values[1]
-            helper_functions.send_email(subject="Arbitrage", content=[line1, line2, line3])
+            optimal_ratio = (row.values[0] + 1) / (prev_odds + 1)
+            bet_on_away = (optimal_ratio / (optimal_ratio + 1)) * 100
+            bet_on_home = (1 / (optimal_ratio + 1)) * 100
+            line4 = "Optimal bets for 100€ are: " + prev_team + '-' + bet_on_home + " , " + index + "-" + bet_on_away
+            helper_functions.send_email(subject="Arbitrage", content=[line1, line2, line3, line4])
         home = True
-#         if decimal_odds_to_implied_prob(float(row.values[0])) < model_probs.loc[index].values[0]:
-#             print("Discrepancy in odds with modelled probability", index, decimal_odds_to_implied_prob(float(row.values[0])), "<", model_probs.loc[index].values[0])
-
-
+        if helper_functions.decimal_odds_to_implied_prob(float(row.values[0])) < BT_modelled_probs.loc[index].values[0]:
+            print("Discrepancy in odds with modelled probability", index, helper_functions.decimal_odds_to_implied_prob(float(row.values[0])), "<", BT_modelled_probs.loc[index].values[0])
+            line1 = index + " @ " + prev_team
+            line2 = "Discrepancy in odds with modelled probability " + index + helper_functions.decimal_odds_to_implied_prob(
+                float(row.values[0])) + " < " + BT_modelled_probs.loc[index].values[0]
+            line3 = "(AWAY) " + index + " at " + str(row.values[0]) + " on " + row.values[1]
+            helper_functions.send_email(subject="Modelling Discrepancy", content=[line1, line2, line3])
 # _________________________________________
 
 
@@ -256,4 +273,6 @@ if not live_final_time == 0:
         temp = live_odds[name].loc[:, ["Team", "Home/Away", "Opposition"]].copy()
         live_best_odds_df = pd.merge(temp, live_best_odds_df, on=["Team"], how='left')
         worksheet.update([live_best_odds_df.columns.values.tolist()] + live_best_odds_df.values.tolist())
+
+
 

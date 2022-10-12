@@ -6,9 +6,9 @@ import pandas as pd
 from selenium.webdriver.common.by import By
 
 
-def paddy_power_scraper(driver, current_date, current_time, name, credentials):
+def bet888_scraper(driver, current_date, current_time, name, credentials):
     print(f'---- STARTING {name} ----')
-    web = 'https://www.paddypower.com/basketball'
+    web = 'https://www.888sport.com/basketball/'
     driver.get(web)
 
     time.sleep(15)
@@ -48,61 +48,51 @@ def paddy_power_scraper(driver, current_date, current_time, name, credentials):
         print("Live sheet didn't exist yet, creating")
         join_live_match = False
 
-    time.sleep(5)
     box = driver.find_element(by=By.XPATH,
-                              value='/html/body/div[1]/page-container/div/main/div/content-managed-page/div/div[2]/div/div[1]/coupon-card/div/abc-card/div/div/abc-card-content/div/avb-coupon/div')
+                              value='//*[@id="spect8"]/div/main/div[3]/div/div/div[2]/div/div[1]/section/div/div/div/section')
     box.location_once_scrolled_into_view
-
     time.sleep(5)
-    for team in box.find_elements(by=By.CLASS_NAME, value='avb-item__event-row'):
+
+    for team in box.find_elements(by=By.CLASS_NAME, value='bet-card'):
         if team.text:
             txt = team.text.split('\n')
-            print(txt)
-            if " " not in txt[0]:
-                # implies match is live, is this a sufficient check?
-                print("Live match")
-                print(len(txt))
-                # NB: Betting may be locked, hence check if returns length
-                if len(txt) == 5:
-                    print("BETTING FOR ONE OF THEM IS LOCKED")
-                    print(txt)
-                    if int(txt[2]) > int(txt[0]):
-                        away_odds = helper_functions.odds_to_decimal(txt[4])
-                        home_odds = np.nan
-                    else:
-                        home_odds = helper_functions.odds_to_decimal(txt[4])
-                        away_odds = np.nan
-                    # match = [txt[1] + " " + txt[3], str([away_odds, home_odds]), str([int(txt[0]), int(txt[2])])]
-                    # data = pd.DataFrame(match).T
-                    home = [txt[3], "H", txt[1].rstrip(" @"), str(home_odds), str(int(txt[2]))]
-                    home = pd.DataFrame(home).T
-                    away = [txt[1].rstrip(" @"), "A", txt[3], str(away_odds), str(int(txt[0]))]
-                    away = pd.DataFrame(away).T
-                    live_matches = pd.concat([live_matches, home, away], axis=0, ignore_index=True)
-                # NOT SAFE, index can be out of bounds
-                elif len(txt) > 4:
-                    away_odds = helper_functions.odds_to_decimal(txt[4])
-                    home_odds = helper_functions.odds_to_decimal(txt[5])
-                    # match = [txt[1] + " " + txt[3], str([away_odds, home_odds]), str([int(txt[0]), int(txt[2])])]
-                    # data = pd.DataFrame(match).T
-                    home = [txt[3], "H", txt[1].rstrip(" @"), str(home_odds), str(int(txt[2]))]
-                    home = pd.DataFrame(home).T
-                    away = [txt[1].rstrip(" @"), "A", txt[3], str(away_odds), str(int(txt[0]))]
-                    away = pd.DataFrame(away).T
-                    live_matches = pd.concat([live_matches, home, away], axis=0, ignore_index=True)
-                else:
-                    print("Betting is locked")
+            away_odds = helper_functions.odds_to_decimal(txt[-1])
+            home_odds = helper_functions.odds_to_decimal(txt[-2])
+            home = [txt[2], "H", txt[1].rstrip(" @"), str(home_odds)]
+            home = pd.DataFrame(home).T
+            away = [txt[1].rstrip(" @"), "A", txt[2], str(away_odds)]
+            away = pd.DataFrame(away).T
+            matches = pd.concat([matches, home, away], axis=0, ignore_index=True)
+        elif not team.text:
+            print('no more teams in featured matches to append')
 
+    web = 'https://www.888sport.com/inplay/basketball/ips-229/'
+    driver.get(web)
+
+    time.sleep(5)
+    box = driver.find_element(by=By.XPATH, value='//*[@id="bb-inplay-app"]/div/div/section/div/div/section[1]/div')
+    box.location_once_scrolled_into_view
+    time.sleep(5)
+
+    for team in box.find_elements(by=By.CLASS_NAME, value='bb-sport-event'):
+        if team.text:
+            txt = team.text.split('\n')
+            if not len(txt) == 11:
+                if int(txt[3]) > int(txt[1]):
+                    away_odds = helper_functions.odds_to_decimal(txt[-1])
+                    home_odds = np.nan
+                else:
+                    home_odds = helper_functions.odds_to_decimal(txt[-1])
+                    away_odds = np.nan
             else:
-                away_odds = helper_functions.odds_to_decimal(txt[2])
-                home_odds = helper_functions.odds_to_decimal(txt[3])
-                # match = [txt[0] + " " + txt[1], str([away_odds, home_odds])]
-                # data = pd.DataFrame(match).T
-                home = [txt[1], "H", txt[0].rstrip(" @"), str(home_odds)]
-                home = pd.DataFrame(home).T
-                away = [txt[0].rstrip(" @"), "A", txt[1], str(away_odds)]
-                away = pd.DataFrame(away).T
-                matches = pd.concat([matches, home, away], axis=0, ignore_index=True)
+                away_odds = helper_functions.odds_to_decimal(txt[-1])
+                home_odds = helper_functions.odds_to_decimal(txt[-2])
+
+            home = [txt[2], "H", txt[0].rstrip(" @"), str(home_odds), str(int(txt[3]))]
+            home = pd.DataFrame(home).T
+            away = [txt[0].rstrip(" @"), "A", txt[2], str(away_odds), str(int(txt[1]))]
+            away = pd.DataFrame(away).T
+            live_matches = pd.concat([live_matches, home, away], axis=0, ignore_index=True)
         elif not team.text:
             print('no more teams in featured matches to append')
 
