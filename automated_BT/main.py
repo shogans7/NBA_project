@@ -23,13 +23,21 @@ BT2 = importr('BradleyTerry2')
 
 local = True
 
+today = (dt.datetime.now()).strftime("%Y%m%d")
+yesterday = (dt.datetime.now()-timedelta(days=1)).strftime("%Y%m%d")
+match_date = yesterday
+fixtures_date = today
+print(match_date)
+
 chrome_options = webdriver.ChromeOptions()
 if local:
     driver_service = Service('/Users/shanehogan/Downloads/chromedriver')
-    file_path = "/Users/shanehogan/Desktop/Betting Project Data/NBA-Results--ALL.csv"
+    file_path_in = "/Users/shanehogan/Desktop/Betting Project Data/NBA-Results--ALL.csv"
+    file_path_out = f"/Users/shanehogan/Desktop/Betting Project Data/NBA-BT-Probabilities--{fixtures_date}.csv"
 else:
     driver_service = Service("/usr/bin/chromedriver")
-    file_path = ""
+    file_path_in = "~/NBA/data/NBA-Results--ALL.csv"
+    file_path_out = f"~/NBA/data/NBA-BT-Probabilities/NBA-BT-Probabilities--{fixtures_date}.csv"
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument('--disable-gpu')
@@ -41,15 +49,10 @@ else:
     chrome_options.add_argument("start-maximized")
 
 
-final_df = pd.read_csv(file_path)
+final_df = pd.read_csv(file_path_in)
 driver = webdriver.Chrome(service=driver_service, options=chrome_options)
 tz_params = {'timezoneId': 'US/Pacific'}
 driver.execute_cdp_cmd('Emulation.setTimezoneOverride', tz_params)
-today = (dt.datetime.now()).strftime("%Y%m%d")
-yesterday = (dt.datetime.now()-timedelta(days=1)).strftime("%Y%m%d")
-match_date = yesterday
-fixtures_date = today
-print(match_date)
 driver.get(f"https://www.espn.com/nba/scoreboard/_/date/{match_date}")
 time.sleep(2)
 # cookies_xpath = '//*[@id="onetrust-accept-btn-handler"]'
@@ -116,7 +119,7 @@ for index, fixture in fixtures.iterrows():
 
 BT_probs_df = pd.DataFrame.from_dict([BT_probs_dict]).T
 BT_probs_df.columns = ["Win Probability"]
-# BT_probs_df.to_csv(f"/Users/shanehogan/Desktop/Betting Project Data/NBA-BT-Probabilities--{fixtures_date}.csv", index = False)
+# BT_probs_df.to_csv(file_path_out, index = False)
 
-
+print(BT_probs_df)
 

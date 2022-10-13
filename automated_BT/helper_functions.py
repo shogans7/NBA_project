@@ -41,7 +41,6 @@ def parse_fixtures(driver, fixtures_date):
         for team in box.find_elements(by=By.CLASS_NAME, value='Scoreboard.bg-clr-white.flex.flex-auto.justify-between'):
             if team.text:
                 txt = team.text.split('\n')
-                print(txt)
                 channels = ['ESPN', 'TNT', 'NBA TV', 'ABC']
                 if txt[1] in channels:
                     if txt[2] in channels:

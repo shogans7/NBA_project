@@ -27,7 +27,7 @@ date = today
 if local:
     file_path = f"/Users/shanehogan/Desktop/Betting Project Data/NBA-BT-Probabilities--{today}.csv"
 else:
-    file_path = ""
+    file_path = f"~/NBA/data/NBA-BT-Probabilities/NBA-BT-Probabilities--{today}.csv"
 
 scopes = [
     'https://www.googleapis.com/auth/spreadsheets',
