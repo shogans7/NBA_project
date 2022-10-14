@@ -23,9 +23,9 @@ BT2 = importr('BradleyTerry2')
 
 local = True
 
-tz = pytz.timezone('US/Pacific')
-today = (dt.datetime.now()).strftime("%Y%m%d")
-yesterday = (dt.datetime.now()-timedelta(days=1)).strftime("%Y%m%d")
+tz = pytz.timezone('UTC')
+today = (dt.datetime.now(tz)).strftime("%Y%m%d")
+yesterday = (dt.datetime.now(tz)-timedelta(days=1)).strftime("%Y%m%d")
 match_date = yesterday
 fixtures_date = today
 print(match_date)
@@ -121,7 +121,7 @@ for index, fixture in fixtures.iterrows():
 
 BT_probs_df = pd.DataFrame.from_dict([BT_probs_dict]).T
 BT_probs_df.columns = ["Win Probability"]
-BT_probs_df.to_csv(file_path_out, index=False)
+BT_probs_df.to_csv(file_path_out, index=True)
 
 print(BT_probs_df)
 

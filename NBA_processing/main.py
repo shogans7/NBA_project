@@ -38,7 +38,7 @@ json_file_pathname = "/Users/shanehogan/Downloads/crafty-haiku-361014-eb14babc81
 credentials = ServiceAccountCredentials.from_json_keyfile_name(json_file_pathname, scopes)
 
 
-BT_modelled_probs = pd.read_csv(file_path)
+BT_modelled_probs = pd.read_csv(file_path, index_col=0)
 odds = {}
 live_odds = {}
 
