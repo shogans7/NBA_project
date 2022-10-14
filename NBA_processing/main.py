@@ -25,7 +25,7 @@ yesterday = (dt.datetime.now() - timedelta(days=1)).strftime("%d-%m-%Y")
 date = today
 
 if local:
-    file_path = f"/Users/shanehogan/Desktop/Betting Project Data/NBA-BT-Probabilities--{today}.csv"
+    file_path = f"/Users/shanehogan/Desktop/Betting Project Data/BT-Probabilities/NBA-BT-Probabilities--{today}.csv"
 else:
     file_path = f"~/NBA/data/NBA-BT-Probabilities/NBA-BT-Probabilities--{today}.csv"
 

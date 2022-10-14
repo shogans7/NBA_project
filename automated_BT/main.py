@@ -13,7 +13,7 @@ from rpy2.robjects.packages import importr, data
 from rpy2.robjects import pandas2ri
 from rpy2.robjects.conversion import localconverter
 import math
-
+import pytz
 
 utils = importr('utils')
 base = importr('base')
@@ -23,6 +23,7 @@ BT2 = importr('BradleyTerry2')
 
 local = True
 
+tz = pytz.timezone('US/Pacific')
 today = (dt.datetime.now()).strftime("%Y%m%d")
 yesterday = (dt.datetime.now()-timedelta(days=1)).strftime("%Y%m%d")
 match_date = yesterday
@@ -33,7 +34,7 @@ chrome_options = webdriver.ChromeOptions()
 if local:
     driver_service = Service('/Users/shanehogan/Downloads/chromedriver')
     file_path_in = "/Users/shanehogan/Desktop/Betting Project Data/NBA-Results--ALL.csv"
-    file_path_out = f"/Users/shanehogan/Desktop/Betting Project Data/NBA-BT-Probabilities--{fixtures_date}.csv"
+    file_path_out = f"/Users/shanehogan/Desktop/Betting Project Data/BT-Probabilities/NBA-BT-Probabilities--{fixtures_date}.csv"
 else:
     driver_service = Service("/usr/bin/chromedriver")
     file_path_in = "~/NBA/data/NBA-Results--ALL.csv"
@@ -65,10 +66,11 @@ final_df = pd.concat([final_df, df], ignore_index = True)
 cols_to_change = {"Match Date": int, "Away Score": int, "Home Score": int, "OT": int}
 final_df = final_df.astype(cols_to_change)
 print(final_df)
-# final_df.to_csv("/Users/shanehogan/Desktop/Betting Project Data/NBA-Results--ALL.csv", index = False)
+final_df.to_csv(file_path_in, index = False)
 
 driver.get(f"https://www.espn.com/nba/scoreboard/_/date/{fixtures_date}")
 fixtures = helper_functions.parse_fixtures(driver, fixtures_date)
+print(fixtures)
 
 driver.close()
 driver.quit()
@@ -119,7 +121,7 @@ for index, fixture in fixtures.iterrows():
 
 BT_probs_df = pd.DataFrame.from_dict([BT_probs_dict]).T
 BT_probs_df.columns = ["Win Probability"]
-# BT_probs_df.to_csv(file_path_out, index = False)
+BT_probs_df.to_csv(file_path_out, index=False)
 
 print(BT_probs_df)
 

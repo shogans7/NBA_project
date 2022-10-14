@@ -12,7 +12,6 @@ def parse_results(driver, match_date):
             if team.text:
                 txt = team.text.split('\n')
                 if txt[0] == 'FINAL':
-                    print(txt[6])
                     if txt[6] == "36ers" or txt[6] == "Maccabi":
                         print("Not an NBA team")
                     else:
@@ -41,7 +40,7 @@ def parse_fixtures(driver, fixtures_date):
         for team in box.find_elements(by=By.CLASS_NAME, value='Scoreboard.bg-clr-white.flex.flex-auto.justify-between'):
             if team.text:
                 txt = team.text.split('\n')
-                channels = ['ESPN', 'TNT', 'NBA TV', 'ABC']
+                channels = ['ESPN', 'TNT', 'NBA TV', 'ABC', 'ESPN2']
                 if txt[1] in channels:
                     if txt[2] in channels:
                         match_list = [fixtures_date, txt[3], txt[5]]
