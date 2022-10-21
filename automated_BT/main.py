@@ -14,6 +14,10 @@ from rpy2.robjects import pandas2ri
 from rpy2.robjects.conversion import localconverter
 import math
 import pytz
+from fake_useragent import UserAgent
+from oauth2client.service_account import ServiceAccountCredentials
+import gspread
+
 
 utils = importr('utils')
 base = importr('base')
@@ -30,14 +34,21 @@ match_date = yesterday
 fixtures_date = today
 print(match_date)
 
+scopes = [
+        'https://www.googleapis.com/auth/spreadsheets',
+        'https://www.googleapis.com/auth/drive'
+    ]
+
 chrome_options = webdriver.ChromeOptions()
 if local:
     driver_service = Service('/Users/shanehogan/Downloads/chromedriver')
     file_path_in = "/Users/shanehogan/Desktop/Betting Project Data/NBA-Results--ALL.csv"
+    json_file_pathname = "/Users/shanehogan/Downloads/crafty-haiku-361014-eb14babc812e.json"
     file_path_out = f"/Users/shanehogan/Desktop/Betting Project Data/BT-Probabilities/NBA-BT-Probabilities--{fixtures_date}.csv"
 else:
     driver_service = Service("/usr/bin/chromedriver")
     file_path_in = "~/NBA/data/NBA-Results--ALL.csv"
+    json_file_pathname = "/root/crafty-haiku-361014-eb14babc812e.json"
     file_path_out = f"~/NBA/data/NBA-BT-Probabilities/NBA-BT-Probabilities--{fixtures_date}.csv"
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
@@ -50,7 +61,18 @@ else:
     chrome_options.add_argument("start-maximized")
 
 
-final_df = pd.read_csv(file_path_in)
+credentials = ServiceAccountCredentials.from_json_keyfile_name(json_file_pathname, scopes)
+file = gspread.authorize(credentials)
+document = file.open("NBA_Results_ALL")
+
+try:
+    sheet = document.worksheet("DATA")
+    final_df = helper_functions.clean_df_from_gsheets(pd.DataFrame(sheet.get_all_values()))
+    print(final_df)
+except Exception as e:
+    print(e)
+
+
 driver = webdriver.Chrome(service=driver_service, options=chrome_options)
 tz_params = {'timezoneId': 'US/Pacific'}
 driver.execute_cdp_cmd('Emulation.setTimezoneOverride', tz_params)

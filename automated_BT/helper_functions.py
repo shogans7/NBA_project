@@ -65,3 +65,11 @@ def prob_i_beats_j(alpha, beta_home, beta_away):
     return (math.exp(alpha+beta_home-beta_away))/(1+math.exp(alpha+beta_home-beta_away))
 
 
+def clean_df_from_gsheets(df):
+    if not df.empty:
+        headers = df.iloc[0].values
+        df.columns = headers
+        df.drop(index=0, axis=0, inplace=True)
+    return df
+
+

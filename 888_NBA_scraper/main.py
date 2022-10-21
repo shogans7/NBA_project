@@ -23,8 +23,8 @@ try:
         geoipv6_path = '/Applications/Tor Browser.app/Contents/Resources/TorBrowser/Tor/geoip6'
     else:
         TOR_PATH = '/./usr/bin/tor'
-        geoip_path = 'geoip'
-        geoipv6_path = 'geoip6'
+        geoip_path = '~/geoip'
+        geoipv6_path = '~/geoip6'
 
     # DICTIONARY of countries where your desired website is unrestricted, and relevant tor code
     # FOUND at https://techearl.com/security/torrc
@@ -72,7 +72,7 @@ try:
         raise Exception("Incorrect exit node")
 
     chrome_options = webdriver.ChromeOptions()
-    if local:
+    if not local:
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument('--disable-gpu')
