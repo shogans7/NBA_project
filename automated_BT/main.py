@@ -85,7 +85,7 @@ time.sleep(2)
 
 df = helper_functions.parse_results(driver, match_date)
 final_df = pd.concat([final_df, df], ignore_index = True)
-cols_to_change = {"Match Date": int, "Away Score": int, "Home Score": int, "OT": int}
+cols_to_change = {"Match Date": int, "Away Score": int, "Home Score": int, "OT": int, "Result": int}
 final_df = final_df.astype(cols_to_change)
 print(final_df)
 final_df.to_csv(file_path_in, index = False)
