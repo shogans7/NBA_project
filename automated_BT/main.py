@@ -28,10 +28,12 @@ BT2 = importr('BradleyTerry2')
 local = True
 
 tz = pytz.timezone('UTC')
-today = (dt.datetime.now(tz)).strftime("%Y%m%d")
-yesterday = (dt.datetime.now(tz)-timedelta(days=1)).strftime("%Y%m%d")
-match_date = yesterday
-fixtures_date = today
+today_ESPN_format = (dt.datetime.now(tz)).strftime("%Y%m%d")
+today = (dt.datetime.now(tz)).strftime("%d-%m-%Y")
+yesterday_ESPN_format = (dt.datetime.now(tz)-timedelta(days=1)).strftime("%Y%m%d")
+yesterday = (dt.datetime.now(tz)-timedelta(days=1)).strftime("%d-%m-%Y")
+match_date = yesterday_ESPN_format
+fixtures_date = today_ESPN_format
 print(match_date)
 
 scopes = [
@@ -44,12 +46,12 @@ if local:
     driver_service = Service('/Users/shanehogan/Downloads/chromedriver')
     file_path_in = "/Users/shanehogan/Desktop/Betting Project Data/NBA-Results--ALL.csv"
     json_file_pathname = "/Users/shanehogan/Downloads/crafty-haiku-361014-eb14babc812e.json"
-    file_path_out = f"/Users/shanehogan/Desktop/Betting Project Data/BT-Probabilities/NBA-BT-Probabilities--{fixtures_date}.csv"
+    file_path_out = f"/Users/shanehogan/Desktop/Betting Project Data/BT-Probabilities/NBA-BT-Probabilities--{today}.csv"
 else:
     driver_service = Service("/usr/bin/chromedriver")
     file_path_in = "~/NBA/data/NBA-Results--ALL.csv"
     json_file_pathname = "/root/crafty-haiku-361014-eb14babc812e.json"
-    file_path_out = f"~/NBA/data/NBA-BT-Probabilities/NBA-BT-Probabilities--{fixtures_date}.csv"
+    file_path_out = f"~/NBA/data/NBA-BT-Probabilities/NBA-BT-Probabilities--{today}.csv"
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument('--disable-gpu')
@@ -85,7 +87,7 @@ time.sleep(2)
 
 df = helper_functions.parse_results(driver, match_date)
 final_df = pd.concat([final_df, df], ignore_index = True)
-cols_to_change = {"Match Date": int, "Away Score": int, "Home Score": int, "OT": int, "Result": int}
+cols_to_change = {"Match Date": int, "Away Score": int, "Home Score": int, "OT": int, "result": int}
 final_df = final_df.astype(cols_to_change)
 print(final_df)
 final_df.to_csv(file_path_in, index = False)

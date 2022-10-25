@@ -12,6 +12,41 @@ to = 'hogans7@tcd.ie'
 ffstream = importr('ffstream')
 
 
+fullname_to_nickname_dict = {
+    "Philadelphia 76ers" : "76ers",
+    "Golden State Warriors": "Warriors",
+    "Phoenix Suns": "Suns",
+    "Utah Jazz": "Jazz",
+    "Boston Celtics": "Celtics",
+    "Los Angeles Lakers": "Lakers",
+    "San Antonio Spurs": "Spurs",
+    "Detroit Pistons": "Pistons",
+    "Indiana Pacers": "Pacers",
+    "Orlando Magic": "Magic",
+    "Toronto Raptors": "Raptors",
+    "Denver Nuggets": "Nuggets",
+    "Miami Heat": "Heat",
+    "Chicago Bulls": "Bulls",
+    "Cleveland Cavaliers": "Cavaliers",
+    "Houston Rockets": "Rockets",
+    "Milwaukee Bucks": "Bucks",
+    "Memphis Grizzlies": "Grizzlies",
+    "Dallas Mavericks": "Mavericks",
+    "Oklahoma City Thunder": "Thunder",
+    "Los Angeles Clippers": "Clippers",
+    "Sacramento Kings": "Kings",
+    "New Orleans Pelicans": "Pelicans",
+    "Charlotte Hornets": "Hornets",
+    "Washington Wizards": "Wizards",
+    "Brooklyn Nets": "Nets",
+    "Atlanta Hawks": "Hawks",
+    "New York Knicks": "Knicks",
+    "Minnesota Timberwolves": "Timberwolves",
+    "Portland Trail Blazers": "Trail Blazers",
+ }
+
+
+
 def decimal_odds_to_implied_prob(odds):
     return round(100 / (odds + 1), 2)
 

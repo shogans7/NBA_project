@@ -137,11 +137,12 @@ for index, row in best_odds_df.iterrows():
         prev_team = index
         prev_bookie = row.values[1]
         home = False
-        if helper_functions.decimal_odds_to_implied_prob(float(row.values[0])) < BT_modelled_probs.loc[index].values[0]:
-            print("Discrepancy in odds with modelled probability", index, helper_functions.decimal_odds_to_implied_prob(float(row.values[0])), "<", BT_modelled_probs.loc[index].values[0])
+        nickname = helper_functions.fullname_to_nickname_dict[index]
+        if helper_functions.decimal_odds_to_implied_prob(float(row.values[0])) < BT_modelled_probs.loc[nickname].values[0]:
+            print("Discrepancy in odds with modelled probability", index, helper_functions.decimal_odds_to_implied_prob(float(row.values[0])), "<", BT_modelled_probs.loc[nickname].values[0])
             line1 = index + " @ " + prev_team
             line2 = "Discrepancy in odds with modelled probability " + index + helper_functions.decimal_odds_to_implied_prob(
-                float(row.values[0])) + " < " + BT_modelled_probs.loc[index].values[0]
+                float(row.values[0])) + " < " + BT_modelled_probs.loc[nickname].values[0]
             line3 = "(HOME) " + index + " at " + str(row.values[0]) + " on " + row.values[1]
             helper_functions.send_email(subject="Modelling Discrepancy", content=[line1, line2, line3])
 
@@ -162,11 +163,12 @@ for index, row in best_odds_df.iterrows():
             line4 = "Optimal bets for 100€ are: " + prev_team + '-' + bet_on_home + " , " + index + "-" + bet_on_away
             helper_functions.send_email(subject="Arbitrage", content=[line1, line2, line3, line4])
         home = True
-        if helper_functions.decimal_odds_to_implied_prob(float(row.values[0])) < BT_modelled_probs.loc[index].values[0]:
-            print("Discrepancy in odds with modelled probability", index, helper_functions.decimal_odds_to_implied_prob(float(row.values[0])), "<", BT_modelled_probs.loc[index].values[0])
+        nickname = helper_functions.fullname_to_nickname_dict[index]
+        if helper_functions.decimal_odds_to_implied_prob(float(row.values[0])) < BT_modelled_probs.loc[nickname].values[0]:
+            print("Discrepancy in odds with modelled probability", index, helper_functions.decimal_odds_to_implied_prob(float(row.values[0])), "<", BT_modelled_probs.loc[nickname].values[0])
             line1 = index + " @ " + prev_team
             line2 = "Discrepancy in odds with modelled probability " + index + helper_functions.decimal_odds_to_implied_prob(
-                float(row.values[0])) + " < " + BT_modelled_probs.loc[index].values[0]
+                float(row.values[0])) + " < " + BT_modelled_probs.loc[nickname].values[0]
             line3 = "(AWAY) " + index + " at " + str(row.values[0]) + " on " + row.values[1]
             helper_functions.send_email(subject="Modelling Discrepancy", content=[line1, line2, line3])
 # _________________________________________
