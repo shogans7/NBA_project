@@ -49,8 +49,13 @@ def paddy_power_scraper(driver, current_date, current_time, name, credentials):
         join_live_match = False
 
     time.sleep(5)
-    box = driver.find_element(by=By.XPATH,
-                              value='/html/body/div[1]/page-container/div/main/div/content-managed-page/div/div[2]/div/div[1]/coupon-card/div/abc-card/div/div/abc-card-content/div/avb-coupon/div')
+    # OLD XPATH
+    
+    box = driver.find_element(by=By.CLASS_NAME, value='coupon-list')
+    # box = driver.find_element(by=By.XPATH,
+    #                           value='/html/body/div[1]/page-container/div/main/div/content-managed-page/div/div[2]/div/div[1]/coupon-card/div/abc-card/div/div/abc-card-content/div/avb-coupon/div')
+    # box = driver.find_element(by=By.XPATH,
+    #                           value='/html/body/div[1]/page-container/div/main/div/content-managed-page/div/div[2]/div/div[3]/coupon-card/div/abc-card/div/div/abc-card-content/div/avb-coupon/div')
     box.location_once_scrolled_into_view
 
     time.sleep(5)
