@@ -50,7 +50,7 @@ try:
     tz = pytz.timezone('US/Pacific')
     current_date = dt.datetime.now(tz).strftime("%d-%m-%Y")
     current_time = dt.datetime.now(tz).strftime("%H:%M")
-    print(current_date, current_time)
+    print(current_date, current_time, "Pacific Standard Time")
 
     name = "Betfair"
     scraper.betfair_scraper(driver, current_date, current_time, name, credentials)

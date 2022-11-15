@@ -50,7 +50,7 @@ def paddy_power_scraper(driver, current_date, current_time, name, credentials):
 
     time.sleep(5)
     # OLD XPATH
-    
+
     box = driver.find_element(by=By.CLASS_NAME, value='coupon-list')
     # box = driver.find_element(by=By.XPATH,
     #                           value='/html/body/div[1]/page-container/div/main/div/content-managed-page/div/div[2]/div/div[1]/coupon-card/div/abc-card/div/div/abc-card-content/div/avb-coupon/div')

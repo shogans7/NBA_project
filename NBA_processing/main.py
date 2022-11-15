@@ -4,7 +4,7 @@ import numpy as np
 import random
 from datetime import timedelta
 import helper_functions
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import numpy as np
